@@ -1,0 +1,48 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  labels:
+    app: simple-mern
+  name: simple-mern-master-branch-build
+  namespace: tcbd1de-tools
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: simple-mern-master-branch
+    labels:
+      app: simple-mern
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: simple-mern-master-branch-build
+    labels:
+      app: simple-mern
+      name: simple-mern-build
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: simple-mern-master-branch:latest
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+      requests:
+        cpu: "250m"
+        memory: 500Mi
+    source:
+      contextDir: "client"
+      git:
+        ref: master
+        uri: https://github.com/blueQcloud/simple-mern.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        dockerfilePath: Dockerfile
+        env:
+        - name: PORT
+          value: "3000"
+      type: Docker
+    triggers:
+    - type: ConfigChange
