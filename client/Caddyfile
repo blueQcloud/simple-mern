@@ -1,0 +1,37 @@
+# Where caddy should listen
+:3000
+# Turn on the Web/file server
+file_server
+
+templates {
+        mime application/javascript
+}
+# The site root
+root * /usr/app-root/www
+# Because we should
+encode zstd gzip
+
+handle /static/* {
+        header Cache-Control "max-age=31536000"
+}
+
+handle {
+       header Cache-Control "no-cache, must-revalidate"
+}
+
+handle /service-worker.js {
+        header Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+}
+
+header /service-worker.js {
+        # all static assets SHOULD be cached
+        Content-Type "text/javascript"
+}
+# On OCP we should log to stdout so Prometheus can
+# slurp up the logs for human consumption.
+log {
+        #errors stdout
+        output stdout
+        format single_field common_log
+        level info
+}
