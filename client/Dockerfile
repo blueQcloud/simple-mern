@@ -1,7 +1,7 @@
 # Dockerfile for React client
 
 # Build react client
-FROM node:10.16-alpine
+FROM node:16.19-alpine as builder
 USER 0
 ENV BUILDER_VERSION 1.1
 
@@ -32,8 +32,8 @@ COPY Caddyfile /usr/app-root/etc
 
 RUN caddy fmt /usr/app-root/etc/Caddyfile --overwrite
 
-RUN chmod -R 775 /opt/app-root/*
-WORKDIR /opt/app-root/www
+RUN chmod -R 775 /usr/app-root/*
+WORKDIR /usr/app-root/www
 
 EXPOSE 3000
 
